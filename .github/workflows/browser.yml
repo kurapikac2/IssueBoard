@@ -1,0 +1,61 @@
+name: Browser end-to-end
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  chromium:
+    # Playwright 1.56 supports Ubuntu 24.04; latest runner is newer.
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install server dependencies
+        run: python -m pip install -r requirements.txt
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install browser test dependencies
+        run: |
+          npm install --prefix e2e --no-audit --no-fund
+          ./e2e/node_modules/.bin/playwright install --with-deps chromium
+
+      - name: Start local IssueBoard
+        run: |
+          nohup python -m uvicorn app.main:app --host 127.0.0.1 --port 8000 > server.log 2>&1 &
+          for i in $(seq 1 40); do
+            if curl --fail --silent http://127.0.0.1:8000/ -o /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat server.log
+          exit 1
+
+      - name: Run end-to-end workflow and capture screenshots
+        run: ./e2e/node_modules/.bin/playwright test e2e/issueboard.spec.cjs --browser=chromium --reporter=line
+
+      - name: Upload browser screenshots and failure traces
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: issueboard-browser-evidence
+          path: |
+            test-results/
+            server.log
+          if-no-files-found: ignore
+          retention-days: 14

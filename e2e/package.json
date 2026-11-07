@@ -1,0 +1,9 @@
+{
+  "name": "issueboard-browser-tests",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Test-only Playwright dependency; not required to run the app.",
+  "devDependencies": {
+    "@playwright/test": "1.56.1"
+  }
+}

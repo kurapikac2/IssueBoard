@@ -37,3 +37,12 @@ MANUAL_QA.md содержит отдельный checklist; он не выдаё
 Dependency vulnerability audit и нагрузочный тест не запускались.
 Pagination, FTS, schema migrations и conflict detection пока не реализованы.
 Независимый review другим агентом не выполнялся.
+
+## Update: automated Chromium E2E — 2026-11-07
+
+A later GitHub Actions run successfully executed the application in a real Chromium browser, after correcting a malformed status-filter option. The test exercised registration/login, project and issue creation, filtering, status changes, history, logout and a 390 px mobile viewport overflow assertion.
+
+- [Successful browser workflow run](https://github.com/kurapikac2/IssueBoard/actions/runs/42349919642).
+- Desktop and mobile screenshots were captured automatically and uploaded as a 14-day Actions artifact named `issueboard-browser-evidence`.
+- The Python and JavaScript syntax workflow also passed for the same pull request.
+- A human visual review across devices and browsers remains pending. Automated screenshots are evidence of rendering, not a guarantee of design quality or accessibility.

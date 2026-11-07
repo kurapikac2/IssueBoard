@@ -98,7 +98,7 @@ The database holds account data and must stay private. Deployment would require 
 
 ## Demo and screenshots
 
-Start with the [step-by-step local demo](docs/DEMO.md). The repository includes [a browser QA checklist](docs/MANUAL_QA.md), but actual browser screenshots and a full responsive visual review have **not** been independently verified yet. Avoid presenting the interface sketches in earlier documentation as real screenshots.
+Start with the [step-by-step local demo](docs/DEMO.md). GitHub Actions now runs an automated **Chromium end-to-end test** covering registration, project and issue creation, status filters, status history, logout and mobile horizontal overflow. Each browser workflow run uploads actual desktop/mobile screenshots as a temporary `issueboard-browser-evidence` artifact under [Actions](https://github.com/kurapikac2/IssueBoard/actions). These are genuine automated browser captures, **not** a substitute for a separate human visual and cross-browser QA review. Use the [manual browser checklist](docs/MANUAL_QA.md) for that final review.
 
 ## Next improvements
 
