@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#002fa7">
+  <title>IssueBoard — проекты и задачи</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/static/styles.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#main">К содержимому</a>
+<div id="notice" role="status" aria-live="polite" hidden></div>
+<section id="auth-view" class="auth-layout">
+  <div class="auth-story">
+    <a class="brand" href="/">IssueBoard<span class="brand-dot"></span></a>
+    <div>
+      <p class="eyebrow">Ваши проекты. Следующий шаг.</p>
+      <h1>От ошибки<br>к решению.</h1>
+      <p class="story-copy">Соберите bugs и tasks в одном месте.<br>Следите за прогрессом и историей изменений.</p>
+    </div>
+    <p class="story-footer">Python / FastAPI / SQLite</p>
+  </div>
+  <div class="auth-panel">
+    <div class="auth-card">
+      <p class="eyebrow" id="auth-caption">С возвращением</p>
+      <h2 id="auth-heading">Войти в IssueBoard</h2>
+      <p class="muted" id="auth-description">Продолжите работу над своими проектами.</p>
+      <form id="auth-form">
+        <label for="username">Имя пользователя</label>
+        <input id="username" name="username" autocomplete="username" minlength="3" maxlength="32"
+               pattern="[a-zA-Z0-9_]+" required aria-describedby="username-help">
+        <small id="username-help">3–32 символа: латинские буквы, цифры и _</small>
+        <label for="password">Пароль</label>
+        <input id="password" name="password" type="password" autocomplete="current-password"
+               minlength="10" maxlength="128" required aria-describedby="password-help">
+        <small id="password-help">От 10 до 128 символов.</small>
+        <p id="auth-error" class="form-error" role="alert"></p>
+        <button class="primary full" type="submit" id="auth-submit">Войти</button>
+      </form>
+      <p class="switch-line"><span id="auth-switch-copy">Ещё нет аккаунта?</span>
+        <button class="text-button" id="auth-switch" type="button">Зарегистрироваться</button>
+      </p>
+    </div>
+  </div>
+</section>
+
+<div id="board-view" class="shell" hidden>
+  <aside class="sidebar">
+    <a class="brand" href="/">IssueBoard<span class="brand-dot"></span></a>
+    <div class="sidebar-heading"><h2>Мои проекты</h2><button id="add-project" class="small-button">Создать</button></div>
+    <nav id="projects" aria-label="Проекты"></nav>
+    <p id="projects-empty" class="muted sidebar-empty" hidden>Здесь появятся ваши проекты.</p>
+    <div class="sidebar-bottom"><span id="current-user"></span><button id="logout" class="text-button">Выйти</button></div>
+  </aside>
+  <main id="main" tabindex="-1">
+    <div class="workspace-bar"><span>Рабочее пространство</span><span>Личные проекты</span></div>
+    <section id="welcome" class="welcome" hidden>
+      <p class="eyebrow">Начните с проекта</p><h1>Место для<br>следующей идеи.</h1>
+      <p class="muted">Создайте проект, чтобы записывать ошибки и задачи.</p>
+      <button id="first-project" class="primary">Создать первый проект</button>
+    </section>
+    <section id="project-view" hidden>
+      <header class="project-header">
+        <div><p class="eyebrow">Обзор проекта</p><h1 id="project-name"></h1><p id="project-description" class="muted"></p></div>
+        <button id="add-issue" class="primary">Создать issue</button>
+      </header>
+      <div class="metrics" aria-label="Показатели проекта">
+        <div><span>Всего issues</span><strong id="metric-total">0</strong></div>
+        <div><span>Открыто</span><strong id="metric-open">0</strong></div>
+        <div><span>В работе</span><strong id="metric-in_progress">0</strong></div>
+        <div><span>Завершено</span><strong id="metric-done">0</strong></div>
+      </div>
+      <div class="section-heading"><h2>Issues</h2><p class="muted" id="results-count" aria-live="polite"></p></div>
+      <form id="filters" class="filters" role="search">
+        <div class="search-field"><label for="search">Поиск по названию</label><input id="search" type="search" placeholder="Найти issue…" maxlength="160"></div>
+        <div><label for="filter-status">Статус</label><select id="filter-status"><option value="">Все статусы</option value="open">Открыто</option><option value="in_progress">В работе</option><option value="done">Завершено</option></select></div>
+        <div><label for="filter-priority">Приоритет</label><select id="filter-priority"><option value="">Любой приоритет</option><option value="low">Низкий</option><option value="medium">Средний</option><option value="high">Высокий</option></select></div>
+        <div><label for="sort">Обновление</label><select id="sort"><option value="desc">Сначала новые</option><option value="asc">Сначала старые</option></select></div>
+      </form>
+      <div id="issues-list" class="issue-list" aria-live="polite"></div>
+      <div id="issues-empty" class="empty" hidden><h3 id="empty-heading">Пока нет issues</h3><p id="empty-description" class="muted">Добавьте первую ошибку или задачу.</p><button class="text-button" id="empty-action">Создать issue</button></div>
+    </section>
+    <p id="workspace-error" class="form-error" role="alert"></p>
+    <footer class="workspace-footer">IssueBoard <span>Маленькие шаги. Видимый прогресс.</span></footer>
+  </main>
+</div>
+
+<dialog id="project-dialog" aria-labelledby="project-dialog-title">
+  <form id="project-form">
+    <div class="dialog-heading"><h2 id="project-dialog-title">Новый проект</h2><button type="button" class="text-button close-dialog" aria-label="Закрыть">Закрыть</button></div>
+    <label for="new-project-name">Название</label><input id="new-project-name" name="name" maxlength="100" required>
+    <label for="new-project-description">Описание</label><textarea id="new-project-description" name="description" maxlength="2000" rows="3"></textarea>
+    <p class="form-error" id="project-error" role="alert"></p>
+    <div class="dialog-actions"><button type="button" class="secondary close-dialog">Отмена</button><button class="primary" type="submit">Создать проект</button></div>
+  </form>
+</dialog>
+
+<dialog id="issue-dialog" aria-labelledby="issue-dialog-title">
+  <form id="issue-form">
+    <div class="dialog-heading"><h2 id="issue-dialog-title">Новый issue</h2><button type="button" class="text-button close-dialog" aria-label="Закрыть">Закрыть</button></div>
+    <label for="issue-title">Название</label><input id="issue-title" name="title" maxlength="160" required>
+    <label for="issue-description">Описание</label><textarea id="issue-description" name="description" maxlength="10000" rows="4" placeholder="Что произошло или что нужно сделать?"></textarea>
+    <div class="form-grid">
+      <div><label for="issue-type">Тип</label><select id="issue-type" name="type"><option value="task">Task</option><option value="bug">Bug</option></select></div>
+      <div><label for="issue-priority">Приоритет</label><select id="issue-priority" name="priority"><option value="low">Низкий</option><option value="medium" selected>Средний</option><option value="high">Высокий</option></select></div>
+      <div><label for="issue-status">Статус</label><select id="issue-status" name="status"><option value="open">Открыто</option><option value="in_progress">В работе</option><option value="done">Завершено</option></select></div>
+    </div>
+    <section id="history-section" class="history-section" hidden><h3>История статусов</h3><ol id="history"></ol></section>
+    <p class="form-error" id="issue-error" role="alert"></p>
+    <div class="dialog-actions"><button id="delete-issue" type="button" class="danger" hidden>Удалить issue</button><button type="button" class="secondary close-dialog">Отмена</button><button class="primary" type="submit">Сохранить</button></div>
+  </form>
+</dialog>
+<noscript>Для работы IssueBoard включите JavaScript.</noscript>
+</body>
+</html>
