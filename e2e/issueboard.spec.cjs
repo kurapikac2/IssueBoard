@@ -58,7 +58,7 @@ test('a user can register, manage an issue and use mobile layout', async ({ page
 
   await page.locator('#issues-list .issue-title').click();
   await expect(page.locator('#history li')).toHaveCount(2);
-  await page.locator('#issue-dialog .close-dialog').click();
+  await page.locator('#issue-dialog .close-dialog').first().click();
 
   await page.screenshot({ path: testInfo.outputPath('issueboard-desktop.png'), fullPage: true });
   await page.setViewportSize({ width: 390, height: 844 });
