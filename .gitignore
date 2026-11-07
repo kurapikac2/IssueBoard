@@ -11,3 +11,8 @@ data/
 .coverage
 htmlcov/
 *.log
+
+# Browser test dependencies and generated evidence
+e2e/node_modules/
+test-results/
+playwright-report/
