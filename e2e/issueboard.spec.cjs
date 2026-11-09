@@ -60,6 +60,8 @@ test('a user can register, manage an issue and use mobile layout', async ({ page
   await expect(page.locator('#history li')).toHaveCount(2);
   await page.locator('#issue-dialog .close-dialog').first().click();
 
+  // Capture the settled interface after the actual notification dismisses itself.
+  await expect(page.locator('#notice')).toBeHidden({ timeout: 7000 });
   await page.screenshot({ path: testInfo.outputPath('issueboard-desktop.png'), fullPage: true });
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(page.locator('#project-name')).toBeVisible();

@@ -4,6 +4,14 @@ A small issue tracker for personal software projects, built with **FastAPI, SQLi
 
 IssueBoard is a learning project focused on the backend decisions behind a task board: session security, per-user data access, transactional status history and straightforward SQL. It is designed for **local use**, not as a hosted multi-user service.
 
+## Real application
+
+![IssueBoard desktop with a synthetic project and completed issue](docs/images/issueboard-desktop.png)
+
+[Mobile view](docs/images/issueboard-mobile.png) · [Capture provenance and verification](docs/images/README.md) · [Browser CI](https://github.com/kurapikac2/IssueBoard/actions/workflows/browser.yml)
+
+These are actual Chromium screenshots of the local application, using generated test accounts and a disposable project. The application interface is Russian; project documentation is English.
+
 ## What it does
 
 - Register, sign in and sign out. Passwords are hashed with Argon2id.
@@ -67,7 +75,7 @@ Environment variables (set before starting):
 
 If Node.js is available, run `node --check app/static/app.js` to check JavaScript syntax. GitHub Actions checks Python versions and JavaScript syntax on pushes and pull requests.
 
-The previous local review reports **33 passing pytest tests**. The tests include login/logout, ownership boundaries, CSRF, validation, issue filters, state history and a transaction rollback on database failure. See [the review report](docs/REVIEW.md) for its exact scope.
+The portfolio verification on 2026-11-09 reran **33 passing pytest tests** (one existing Starlette/httpx deprecation warning) and the complete Chromium workflow. The tests include login/logout, ownership boundaries, CSRF, validation, issue filters, state history and a transaction rollback on database failure. See [the review report](docs/REVIEW.md) for its exact scope.
 
 ## API overview
 
@@ -98,11 +106,11 @@ The database holds account data and must stay private. Deployment would require 
 
 ## Demo and screenshots
 
-Start with the [step-by-step local demo](docs/DEMO.md). GitHub Actions now runs an automated **Chromium end-to-end test** covering registration, project and issue creation, status filters, status history, logout and mobile horizontal overflow. Each browser workflow run uploads actual desktop/mobile screenshots as a temporary `issueboard-browser-evidence` artifact under [Actions](https://github.com/kurapikac2/IssueBoard/actions). These are genuine automated browser captures, **not** a substitute for a separate human visual and cross-browser QA review. Use the [manual browser checklist](docs/MANUAL_QA.md) for that final review.
+Start with the [step-by-step local demo](docs/DEMO.md). GitHub Actions now runs an automated **Chromium end-to-end test** covering registration, project and issue creation, status filters, status history, logout and mobile horizontal overflow. The README now keeps two inspected captures permanently in `docs/images/`. Each browser workflow run also uploads fresh desktop/mobile screenshots as a temporary `issueboard-browser-evidence` artifact under [Actions](https://github.com/kurapikac2/IssueBoard/actions). These are genuine automated browser captures, **not** a substitute for a separate human visual and cross-browser QA review. Use the [manual browser checklist](docs/MANUAL_QA.md) for that final review.
 
 ## Next improvements
 
-- Run a manual desktop/mobile browser pass and capture genuine screenshots using sample data.
+- Extend the Chromium workflow with keyboard, network-failure and cross-browser acceptance checks.
 - Add versioned SQLite schema migrations.
 - Add pagination and a scalable search method for larger datasets.
 - Improve edit-conflict handling and session management.
